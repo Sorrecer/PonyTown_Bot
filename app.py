@@ -29,10 +29,144 @@ pytesseract.pytesseract.tesseract_cmd = r'D:\Tesseract\tesseract.exe'
 #     os. system("pip install pyautogui")
 ###======= Setup =======###
 
+def steal(name1, name2):
+    items = [
+        "Left Sock",
+        "Wi-Fi Password",
+        "Fridge Light",
+        "Remote Control Batteries",
+        "Favorite Mug",
+        "Secret Stash of Snacks",
+        "Self-Respect",
+        "Couch Cushions",
+        "TV Remote",
+        "Bed Sheets",
+        "Last Piece of Pizza",
+        "Memory Foam Pillow",
+        "Lucky Pen",
+        "Phone Charger",
+        "House Keys",
+        "Toilet Paper Roll",
+        "Last Drop of Shampoo",
+        "Favorite Blanket",
+        "Patience",
+        "Umbrella on a Rainy Day",
+        "Personal Diary",
+        "Thermostat Setting",
+        "Favorite Pair of Sunglasses",
+        "Toothbrush",
+        "Secret Family Recipe",
+        "Sense of Direction",
+        "Alarm Clock",
+        "Bookmark",
+        "Favorite Hoodie",
+        "Memory of Last Night",
+        "Sense of Humor",
+        "Password Manager Access",
+        "Favorite Book",
+        "Scented Candle",
+        "Favorite Chair",
+        "Travel Mug",
+        "Beloved House Plant",
+        "Comfort Food",
+        "Lucky Socks",
+        "Laundry Detergent",
+        "Gym Shoes",
+        "Pet's Favorite Toy",
+        "Super Secret Hiding Spot",
+        "Favorite Playlist",
+        "Wi-Fi Router",
+        "Identity",
+        "Bowl of Candy",
+        "Water Bottle",
+        "Secret Admirer’s Love Letter",
+        "Nap Time"
+    ]
+    item = random.choice(items)
+    kirim_pesan(f"{name1} has stolen {item} from {name2}!")
+
+def calculate_form_percentage(name1):
+    wujud = [
+            "Human",
+            "Wolf",
+            "Dracula",
+            "Cyclops",
+            "President of the United States",
+            "Mafia Boss",
+            "Ghost",
+            "Smurf",
+            "Clown",
+            "Vampire",
+            "Chicken",
+            "Alien",
+            "Dancing Skeleton",
+            "Unicorn",
+            "Mermaid",
+            "Kraken",
+            "Goblin",
+            "Politician",
+            "Yeti",
+            "Giant Hamster",
+            "Ninja Turtle",
+            "Pirate",
+            "Leprechaun",
+            "Dragon",
+            "Gnome",
+            "Lifeguard",
+            "Mummy",
+            "Centaur",
+            "Elf",
+            "Mechanic",
+            "Troll",
+            "Cyborg",
+            "Werewolf",
+            "Fairy",
+            "Djinn",
+            "Medusa",
+            "Tax Accountant",
+            "Robot",
+            "Witch",
+            "Phoenix",
+            "Griffin",
+            "Pegasus",
+            "Giant Ant",
+            "Bigfoot",
+            "Sphinx",
+            "Dwarf",
+            "Giant",
+            "Dinosaur",
+            "Talking Tree",
+            "Living Marshmallow",
+            "Grumpy Cat",
+            "Space Cowboy",
+            "Kraken",
+            "Grumpy Elder",
+            "Vampire",
+            "Talking Fish",
+            "Living Snowman",
+            "Invisible Magician",
+            "Mermaid",
+            "Vegan",
+            "Talking Dog",
+            "Talking Pumpkin"
+        ]
+    # Hashing kombinasi nama menggunakan SHA256
+
+    hash_object = hashlib.sha256((name1.lower()).encode())
+    hex_dig = hash_object.hexdigest()
+    
+    # Mengambil 2 karakter pertama dari hash dan mengubahnya menjadi integer
+    hash_int = int(hex_dig[:2], 16)
+    
+    # Menghitung persentase kecocokan dari 0 hingga 100
+    percentage = hash_int % 61
+    kirim_pesan(f'The real form of {name1} is {wujud[percentage]}')
+
 
 def calculate_furry_percentage(name1):
     # Hashing kombinasi nama menggunakan SHA256
-    hash_object = hashlib.sha256(name1.lower().encode())
+
+    hash_object = hashlib.sha256((name1.lower()).encode())
     hex_dig = hash_object.hexdigest()
     
     # Mengambil 2 karakter pertama dari hash dan mengubahnya menjadi integer
@@ -205,9 +339,7 @@ class Cmd:
         def menu():
             pesan_salam = f"Hi [{username}!]"
             kirim_pesan(pesan_salam)
-            kirim_pesan("I'm an automated bot made by Rick Sanchez")
-            kirim_pesan("Available menus:")
-            kirim_pesan(">games >fun >others")
+            kirim_pesan("command : >games >fun >others")
 
         if username in Admin_name: 
             pesan_salam = f"Hallo Tuan [{username}], Sekarang Jam: {current_hour}:{current_minute}"
@@ -222,13 +354,13 @@ class Cmd:
             menu()
 
     def games(self, match):
-        kirim_pesan(">cointoss >slots >blackjack >roulette")
+        kirim_pesan(">fish, >cointoss, >slots, >blackjack, >roulette")
 
     def fun(self, match):
-        kirim_pesan(">furry [name], >love [name1] [name2]")
+        kirim_pesan(">steal [name], >furry [name], >love [name1] [name2], >form[name]")
 
     def others(self, match):
-        kirim_pesan(">ask, >owner, >about")
+        kirim_pesan(">ask, >news, >talk, >about")
         
     def cointoss(self, match):
         coin = ["head","tail"]
@@ -384,14 +516,120 @@ class Cmd:
             percentage = calculate_love_percentage(name1, name2)
             kirim_pesan(f"Compability of {name1} and {name2} is {percentage}%")
     
+    def steal(self,match):
+        matches = re.findall(r'\[([^\]]+)\] >steal \[([^\]]+)\]', text_cmd)
+        for match in matches:
+            name1 = match[0]
+            name2 = match[1]
+            steal(name1, name2)
+
+    def fish(self, match):
+        kirim_pesan("Casting the fishing rod..")
+        bait = True
+        wait = 0
+        mythical = ["MEGALODON", "LEVIATHAN", "KRAKEN", "NESSIE (LOCH NESS MONSTER)", 
+                    "JÖRMUNGANDR (MIDGARD SERPENT)", "ASPIDOCHELONE (ISLAND WHALE)", "TYRANNOSAURUS REX"
+                    "BASILOSAURUS", "HYDRA", "WYRM", "GIANT SEA SERPENT", "DRAGON TURTLE"]
+
+
+        legend = ["Blue Whale", "Great White Shark", "Giant Squid", "Black Marlin", "Goliath Grouper", 
+                  "Atlantic Bluefin Tuna", "Beluga Sturgeon", "Nile Perch", "Mekong Giant Catfish", 
+                  "Swordfish", "Tiger Shark", "Whale Shark", "Greenland Shark", "Atlantic Tarpon", 
+                  "Sailfish", "Golden Dorado", "Arapaima", "White Sturgeon", "Yellowfin Tuna", 
+                  "Atlantic Halibut", "Wels Catfish", "Barramundi", "Giant Trevally", "Tarpon", 
+                  "King Salmon", "Steelhead Trout", "Blue Marlin", "Giant Freshwater Stingray", 
+                  "Atlantic Goliath Grouper", "Bigeye Tuna", "Leopard Shark", "Shortfin Mako Shark", 
+                  "Pacific Halibut", "Pirarucu", "Queenfish", "Roosterfish", "Red Drum (Redfish)", 
+                  "Amberjack", "Opah (Moonfish)", "Black Drum", "Mahi-Mahi (Dorado)", "Dusky Grouper", 
+                  "Bocaccio", "Blueline Tilefish", "Yellowtail Amberjack", "Yellowmouth Barracuda", 
+                  "Gray Triggerfish"]
+
+        uncommon = ["Opah (Moonfish)", "Oarfish", "Stargazer", "Atlantic Wolffish", "Pacific Sand Lance", 
+                    "Greenland Shark", "Coelacanth", "Vampire Fish (Payara)", "Giant Trevally", "Spotted Handfish",
+                    "Sawfish", "Blobfish", "Wobbegong", "Tripletail", "Pomfret", "Saberfish", "Wolf Herring",
+                    "Stonefish", "Golden Dorado", "Arapaima", "Alligator Gar", "Arowana", "Lamprey", "Hagfish", 
+                    "Sturgeon", "Electric Eel", "Paddlefish", "Australian Lungfish", "African Tigerfish", 
+                    "Mola Mola (Ocean Sunfish)", "Barreleye", "Atlantic Pomfret", "Freshwater Drum", 
+                    "Snakehead", "Zebra Turkeyfish (Lionfish)", "Lancetfish", "Deep-sea Lizardfish", 
+                    "Sailfin Snapper", "Bigeye Tuna", "Opaleye", "Beltfish", "Drumfish", "Butterfish",
+                          "Wrasse", "Scorpionfish", "White Sturgeon", "Arctic Char", "Pirarucu", "Wolf Eel",
+                            "Roosterfish", "Queenfish"]
+
+        common = ["Largemouth Bass", "Smallmouth Bass", "Bluegill", "Crappie", "Catfish", "Trout", 
+                    "Walleye", "Northern Pike", "Perch", "Carp", "Salmon", "Tuna", "Marlin", "Mahi-Mahi", 
+                    "Flounder", "Snapper", "Grouper", "Redfish (Red Drum)", "Striped Bass", "Mackerel", 
+                    "Swordfish", "Halibut", "Cod", "Sea Bass", "Sailfish", "Barracuda", "Tarpon", "Bonefish",
+                    "Amberjack", "Kingfish (King Mackerel)", "Black Drum", "Sheepshead", "Yellowtail", 
+                         "Triggerfish", "Rockfish", "Haddock", "Bluefish", "Snook", "Cobia", "Garfish"]
+
+        trash = ["Discarded Fishing Nets", "Fishing Lines", "Fishing Hooks", "Fishing Lures", 
+                         "Lead Sinkers", "Fishing Floats and Bobbers", "Fishing Line Spools", "Plastic Bait Containers", 
+                         "Bait Bags", "Fishing Rod Pieces", "Coolers and Ice Packs", "Buckets", "Gloves", "Fish Cleaning Waste", 
+                         "Plastic Bags", "Beverage Containers", "Fishing Tackle Packaging", "Damaged Tackle Boxes", 
+                         "Cutting Knives", "Plastic Fishing Floats"]
+                # ngecit
+        match = re.search(r'\[([^\]]+)\] >fish', text_cmd)
+        if match:
+            username = match.group(1)
+        if username == "GEMINI" :
+            gacha = 1
+        else :
+            gacha = random.randint(1, 100)
+
+        while bait == True :
+            time.sleep(1)
+            rando = random.randint(1, 10)
+            if rando == 10 :
+                kirim_pesan("STRIKE!! :fish:")
+                time.sleep(1)
+                bait = False
+                if gacha == 1 :
+                    get = random.choice(mythical)
+                    kirim_pesan(f':comet: MYTHICAL! :comet: You got a {get}')
+                    time.sleep(1)
+                    kirim_pesan(f'Rarity : :star: :star: :star: :star: :star: (:comet: MYTHICAL :comet:)')
+                elif 1 < gacha <= 6 :
+                    get = random.choice(legend)
+                    kirim_pesan(f':sparkles: Legendary! :sparkles: You got a {get}')
+                    time.sleep(1)
+                    kirim_pesan(f'Rarity : :star: :star: :star: :star:  (:sparkles: Legendary :sparkles:)')
+                elif 6 < gacha <= 20 :
+                    get = random.choice(uncommon)
+                    kirim_pesan(f'Excellent! You got a {get}')
+                    time.sleep(1)
+                    kirim_pesan(f'Rarity : :star: :star: :star: (:dolphin: Uncommon :dolphin:)')
+                elif 20 < gacha <= 70 :
+                    get = random.choice(common)
+                    kirim_pesan(f'Nice! You got a {get}')
+                    time.sleep(1)
+                    kirim_pesan(f'Rarity : :star: :star: (:fish: Common :fish:)')
+                else :
+                    get = random.choice(trash)
+                    kirim_pesan(f'whoops! You got a {get}')
+                    time.sleep(1)
+                    kirim_pesan(f'Rarity : :star: (:sob: Trash :sob:)')
+            wait += 1
+            if wait == 10 :
+                kirim_pesan("Nothing caught the bait! try again!")
+                bait = False
+
+    def form(self, match):
+        match = re.search(r'>form \[([^\]]+)\]', text_cmd)
+        if match:
+            username = match.group(1)
+            calculate_form_percentage(username)
+
+
+
+
     def day(self, match):
         username = match.group(1)
         now = datetime.now()
         day_index = now.weekday()
-        day_name = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"][day_index]
+        day_name = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][day_index]
 
 
-        kirim_pesan("Sekarang adalah hari "+day_name+" "+username)
+        kirim_pesan("Today is "+day_name+", "+username)
         
     # def nama_keren(self, match):
     #     username=match.group(1)
@@ -463,6 +701,21 @@ class Cmd:
         ]           
         kirim_pesan(random.choice(talks))
 
+    def fakenews(self, match):
+
+        ceks = gemini("tell me a made up news")
+
+        def send_ceks_in_parts(ceks):
+            max_length = 60
+            if len(ceks) <= max_length:
+                kirim_pesan(ceks)
+            else:
+                parts = [ceks[i:i+max_length] for i in range(0, len(ceks), max_length)]
+                for part in parts:
+                    kirim_pesan(part) 
+                    time.sleep(2)
+
+        send_ceks_in_parts(ceks)
     # def quotes(self, match):
     #     quotes = [
     #     "Jangan menyerah, karena saat menyerah, itu adalah awal dari kegagalan.",
@@ -539,24 +792,26 @@ class Cmd:
                     os.remove("temp.py")
                     
     def ai(self, match):
-        if match.group(3) == None:
+        if match.group(3) is None:
             kirim_pesan("Use: >ask <your question here>")
         else:
             username = match.group(1)
             question = match.group(3)
             ceks = gemini(question)
-            if username in Admin_name:
-                if isinstance(ceks, list):
-                    for item in ceks:
-                        kirim_pesan(item)
-                        time.sleep(7)
-                elif ceks == None:
-                    kirim_pesan("too much request")
-                    gemini(question)
-                else:
+
+            def send_ceks_in_parts(ceks):
+                max_length = 60
+                if len(ceks) <= max_length:
                     kirim_pesan(ceks)
-            elif username not in Admin_name:
-                kirim_pesan(ceks)
+                else:
+                    parts = [ceks[i:i+max_length] for i in range(0, len(ceks), max_length)]
+                    for part in parts:
+                        kirim_pesan(part) 
+                        time.sleep(2)
+            
+            send_ceks_in_parts(ceks)
+
+
                 
     # def sit(self, match):
     #     username = match.group(1)
@@ -678,7 +933,7 @@ if  __name__ == '__main__':
         run = Cmd()
         command('menu', run.menu)
         # command('nama_keren', run.nama_keren)
-        # command('day', run.day)
+        command('day', run.day)
         command('dice', run.dice)
         command('owner', run.owner)
         # command('quotes', run.quotes)
@@ -696,6 +951,10 @@ if  __name__ == '__main__':
         command('others', run.others)
         command('about', run.about)
         command('talk', run.talk)
+        command('steal', run.steal)
+        command('news', run.fakenews)
+        command('fish', run.fish)
+        command('form', run.form)
         # command('sit', run.sit)
         # command('stand', run.stand)
         # command('sleep', run.sleep)

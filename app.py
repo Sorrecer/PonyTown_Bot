@@ -6,7 +6,7 @@ import time, random, re, pyautogui, pytesseract, os, requests, subprocess, rpg, 
 BotName = "Rick's Bot"
 Admin_name = ['I AM RICK']
 prefix = ['+', '>', '-']
-apikey="AIzaSyDb0-LMWXLjAiZZdKcMsXpkqqxWGXhAu6A"
+apikey="AIzaSyDIdODxrZYkAnzKAic1eR3NVSG69WVSRKA"
 pytesseract.pytesseract.tesseract_cmd = r'D:\Tesseract\tesseract.exe'
 ###======= Bot Configuration =======###
 
@@ -28,6 +28,67 @@ pytesseract.pytesseract.tesseract_cmd = r'D:\Tesseract\tesseract.exe'
 # except ModuleNotFoundError:
 #     os. system("pip install pyautogui")
 ###======= Setup =======###
+
+def send_ceks_in_parts(ceks):
+    max_length = 70
+    # Ganti enter dengan spasi dan hapus spasi ekstra di awal/akhir teks
+    ceks = ceks.replace('\n', ' ').strip()
+    words = ceks.split(' ')
+    
+    current_part = []
+    current_length = 0
+
+    for word in words:
+        if current_length + len(word) + 1 <= max_length:  # +1 untuk spasi yang akan ditambahkan
+            current_part.append(word)
+            current_length += len(word) + 1
+        else:
+            kirim_pesan(' '.join(current_part))
+            time.sleep(3)
+            current_part = [word]
+            current_length = len(word) + 1
+    
+    # Kirim bagian terakhir jika ada kata yang tersisa
+    if current_part:
+        kirim_pesan(' '.join(current_part))
+
+async def cai(username):
+    bye = False
+    char = 'eAMpTA3e6NMJBKdaeLhef2i_gAFzK4e8ZBjETRbEajQ'
+
+    client = aiocai.Client('335b4d5c1c3fa11ae78060646e343d8a91c434a6')
+
+    me = await client.get_me()
+
+    async with await client.connect() as chat:
+        new, answer = await chat.new_chat(
+            char, me.id
+        )
+
+        send_ceks_in_parts(f'"{answer.text}"')
+        
+        while bye == False:
+            screen = pyautogui.screenshot()
+            screen = screen.crop((110, 500, 1100, 800))
+            text_cmd = pytesseract.image_to_string(screen)
+            # Stop chatting
+            if "bye gemini" in text_cmd.lower():
+                bye = True
+            else:
+                # Define the regex pattern
+                pattern = re.compile(rf'\[{re.escape(username)}\] (.+)')
+                
+                # Search for the pattern in the captured text
+                match = pattern.search(text_cmd)
+                
+                if match:
+                    text = match.group(1)  # Extract the first captured group
+                    
+                    # Sending message to Character AI
+                    message = await chat.send_message(
+                        char, new.chat_id, text
+                    )
+                    send_ceks_in_parts(f'"{message.text}"')
 
 def steal(name1, name2):
     items = [
@@ -84,6 +145,100 @@ def steal(name1, name2):
     ]
     item = random.choice(items)
     kirim_pesan(f"{name1} has stolen {item} from {name2}!")
+
+def add_fish(name):
+        with open("fish_database.txt", "r+") as file:
+            lines = file.readlines()
+            
+            # Menghapus header dan mengiterasi baris data
+            for line in lines[1:]:
+                data = line.strip().split(',')
+                
+                if data[0].lower() == name.lower():
+                    print(f"{name.capitalize()} sudah ada dalam database.")
+                    return  # Keluar dari fungsi jika nama sudah ada
+
+            # Tambahkan data baru jika nama tidak ditemukan
+            new_data = f"{name},0,0,0,0,0\n"
+            file.write(new_data)
+            print(f"{name.capitalize()} telah ditambahkan ke database.")
+
+def add_duit(name):
+        with open("duit_database.txt", "r+") as file:
+            lines = file.readlines()
+            
+            # Menghapus header dan mengiterasi baris data
+            for line in lines[1:]:
+                data = line.strip().split(',')
+                
+                if data[0].lower() == name.lower():
+                    print(f"{name.capitalize()} sudah ada dalam database.")
+                    return  # Keluar dari fungsi jika nama sudah ada
+
+            # Tambahkan data baru jika nama tidak ditemukan
+            new_data = f"{name},0\n"
+            file.write(new_data)
+            print(f"{name.capitalize()} telah ditambahkan ke database.")
+
+def checkOrkay():
+    with open("duit_database.txt", "r") as file:
+        lines = file.readlines()
+        
+    # Inisialisasi variabel untuk menyimpan informasi orang dengan uang terbanyak
+    richest_person = None
+    max_money = -float('inf')  # Awalnya diatur ke negatif tak hingga
+    
+    # Lewati header dan iterasi baris data
+    for line in lines[1:]:
+        data = line.strip().split(',')
+        money = int(data[1])  # Konversi jumlah uang ke integer
+        
+        if money > max_money:
+            max_money = money
+            richest_person = data[0]
+    
+    if richest_person:
+        kirim_pesan(f"Richest player is {richest_person.capitalize()} with networth of: {max_money}")
+        return richest_person, max_money
+
+def add_catch(name, category_index, increment=1):
+    # Baca file dan cari nama
+    with open("fish_database.txt", "r") as file:
+        lines = file.readlines()
+    
+    # Tulis data baru ke file sementara
+    with open("fish_database.txt", "w") as file:
+        for line in lines:
+            data = line.strip().split(',')
+            
+            # Jika nama cocok, tambahkan nilai pada kategori yang sesuai
+            if data[0].lower() == name.lower():
+                # Tambahkan nilai
+                data[category_index] = str(int(data[category_index]) + increment)
+
+            # Tulis kembali data (baik diperbarui atau tidak)
+            file.write(','.join(data) + '\n')
+        print(f"Data {name.capitalize()} telah diperbarui.")
+
+def add_gacor(name, amount):
+        # Baca file dan simpan semua baris
+        with open("duit_database.txt", "r") as file:
+            lines = file.readlines()
+        
+        # Tulis data baru ke file sementara
+        with open("duit_database.txt", "w") as file:
+            for line in lines:
+                data = line.strip().split(',')
+                
+                if data[0].lower() == name.lower():
+                    if amount == 0:
+                        data[1] = '0'
+                    else:
+                        data[1] = str(int(data[1]) + amount)
+
+                # Tulis kembali data (baik diperbarui atau tidak)
+                file.write(','.join(data) + '\n')
+            print(f"Duit {name.capitalize()} telah diperbarui.")
 
 def calculate_form_percentage(name1):
     wujud = [
@@ -233,20 +388,48 @@ def split_text(text, max_length=70):
 def gemini(meseg):
     headers = {
         'Content-Type': 'application/json',
-        'x-goog-api-key': apikey}
+        'x-goog-api-key': apikey
+    }
+
+     # Correct safety settings with valid categories
+    safe = [
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_NONE",
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_NONE",
+    },
+    ]
+
     data = {
         "contents": [
             {
                 "role": "user",
                 "parts": [
                     {
-                        "text": meseg+". (answer with a brief sentence, less than 60 characters)"
+                        "text": meseg + ". (answer with a brief 1-2 sentence, less than 200 characters in total)"
                     }
                 ]
             }
-        ]
+        ],
+        "safetySettings": safe
     }
-    response = requests.post("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent", headers=headers, json=data)
+
+    response = requests.post(
+        "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
+        headers=headers,
+        json=data
+    )
 
     if response.status_code == 200:
         response_data = response.json()
@@ -255,9 +438,48 @@ def gemini(meseg):
             content_parts = candidates[0].get("content", {}).get("parts", [])
             text_parts = [part["text"] for part in content_parts if "text" in part]
             response_text = " ".join(text_parts)
-            return(response_text)
+            return response_text
         else:
             print("No candidates found.")
+    else:
+        print(f"Error: {response.status_code}")
+        print(response.text)
+
+
+# Definisikan fungsi check
+def checkfish(name):
+    # Membaca file fish_database.txt
+    with open("fish_database.txt", "r") as file:
+        lines = file.readlines()
+        
+        # Menghapus header dan mengiterasi baris data
+        for line in lines[1:]:
+            data = line.strip().split(',')
+            
+            if data[0].lower() == name.lower():
+                # Mencetak hasil dalam format yang diinginkan
+                kirim_pesan(f"{name.capitalize()} mythical: {data[1]}, legendary: {data[2]}, uncommon: {data[3]}")
+                return  # Keluar dari fungsi setelah menemukan data yang sesuai
+        
+        # Jika tidak ditemukan
+        kirim_pesan(f"{name.capitalize()} not found in the database.")
+
+def checkduit(name):
+    # Membaca file fish_database.txt
+    with open("duit_database.txt", "r") as file:
+        lines = file.readlines()
+        
+        # Menghapus header dan mengiterasi baris data
+        for line in lines[1:]:
+            data = line.strip().split(',')
+            
+            if data[0].lower() == name.lower():
+                # Mencetak hasil dalam format yang diinginkan
+                kirim_pesan(f"{name.capitalize()} has networth of ${data[1]}")
+                return  # Keluar dari fungsi setelah menemukan data yang sesuai
+        
+        # Jika tidak ditemukan
+        kirim_pesan(f"{name.capitalize()} not found in the database.")
             
 def command(cmd, run):
     pattern = r'\[(.*?)\](?: whispers:)? ([' + ''.join(re.escape(p) for p in prefix) + '])' + re.escape(cmd) + r'(?: (.+))?'
@@ -288,12 +510,17 @@ def command(cmd, run):
                 kirim_whisp(message="Secret Message Terkirim", username=nama)
                 
 def kirim_pesan(message):
-    pyautogui.typewrite('/')
-    pyautogui.press('backspace')
-    pyautogui.typewrite("/say "+message)
+    pyautogui.press('enter')
+    pyautogui.typewrite(message)
     pyautogui.press('enter')
     pyautogui.typewrite('/clearchat')
     pyautogui.press('enter')
+    # time.sleep(3)
+    # pyautogui.typewrite('/')
+    # pyautogui.press('backspace')
+    # pyautogui.typewrite('.')
+    # pyautogui.press('enter')
+
 
 def kirim_whisp(message, username):
     pyautogui.typewrite('/')
@@ -353,6 +580,10 @@ class Cmd:
         else:
             menu()
 
+    def talkai(self, match):
+        username = match.group(1)
+        asyncio.run(cai(username))
+
     def games(self, match):
         kirim_pesan(">fish, >cointoss, >slots, >blackjack, >roulette")
 
@@ -370,6 +601,8 @@ class Cmd:
         kirim_pesan(random.choice(coin))
 
     def slots(self, match):
+        username = match.group(1)
+        add_duit(username)
         slot = [":banana:", ":heart:", ":skull:"]
         slot1 = random.choice(slot)
         slot2 = random.choice(slot)
@@ -377,14 +610,17 @@ class Cmd:
         kirim_pesan(f"[{slot1}] [{slot2}] [{slot3}]")
         time.sleep(1)
         if slot1 == slot2 == slot3:
-            kirim_pesan("JACKPOT!!")
+            kirim_pesan("JACKPOT!! bits +1000")
+            add_gacor(username, 1000)
         elif slot1 == slot2 or slot2 == slot3 or slot1 == slot3:
-            kirim_pesan("not bad!")
+            kirim_pesan("not bad! bits +100")
+            add_gacor(username, 100)
         else :
-            kirim_pesan("YOU LOSE!")
+            kirim_pesan("YOU LOSE! mone gone :sob:")
+            add_gacor(username, 0)
 
     def blackjack(self, match):
-
+        username = match.group(1)
         loss = False
         
         # Mulai dengan kartu pertama untuk pemain
@@ -406,13 +642,15 @@ class Cmd:
                 time.sleep(1)
 
                 if player_total == 21:
-                    kirim_pesan("You WON! blackjack 21.")
+                    kirim_pesan(f'{username} WON! blackjack 21. bits +500')
                     loss = True
+                    add_gacor(username, 500)
                     break
                 
                 if player_total > 21:
-                    kirim_pesan("You Lose! Busted!")
+                    kirim_pesan(f'{username} Lose! Busted! mone gone :sob:')
                     loss = True
+                    add_gacor(username, 0)
                     break
 
             elif "stand" in text_cmd.lower():
@@ -435,7 +673,7 @@ class Cmd:
                 time.sleep(1)
             
             if dealer_total > 21:
-                kirim_pesan("You won! Dealer busted!")
+                kirim_pesan('Dealer busted!')
                 break
             elif dealer_total >17 and dealer_total <= player_total :
                 new_card = hit_card()
@@ -450,9 +688,11 @@ class Cmd:
         # Menentukan pemenang
         if loss == False :
             if player_total > dealer_total or dealer_total > 21:
-                kirim_pesan("YOU WON!")
+                kirim_pesan(f'{username} won!  WON! bits +500')
+                add_gacor(username, 500)
             elif player_total < dealer_total:
-                kirim_pesan("YOU LOSE! Dealer won!")
+                kirim_pesan("YOU LOSE! Dealer won! mone gone :sob:")
+                add_gacor(username, 0)
             else:
                 kirim_pesan("It's a tie!")
 
@@ -524,9 +764,19 @@ class Cmd:
             steal(name1, name2)
 
     def fish(self, match):
-        kirim_pesan("Casting the fishing rod..")
         bait = True
         wait = 0
+
+        match = re.search(r'\[([^\]]+)\] >fish', text_cmd)
+        if match:
+            username = match.group(1)
+        gacha = random.randint(1, 100)
+        kirim_pesan(f'{username} casts the fishing rod..')
+
+        # menambahkan nama pada database jika belum ada
+        add_fish(username)
+            
+
         mythical = ["MEGALODON", "LEVIATHAN", "KRAKEN", "NESSIE (LOCH NESS MONSTER)", 
                     "JÖRMUNGANDR (MIDGARD SERPENT)", "ASPIDOCHELONE (ISLAND WHALE)", "TYRANNOSAURUS REX"
                     "BASILOSAURUS", "HYDRA", "WYRM", "GIANT SEA SERPENT", "DRAGON TURTLE"]
@@ -588,26 +838,31 @@ class Cmd:
                     kirim_pesan(f':comet: MYTHICAL! :comet: You got a {get}')
                     time.sleep(1)
                     kirim_pesan(f'Rarity : :star: :star: :star: :star: :star: (:comet: MYTHICAL :comet:)')
+                    add_catch(username, 1)
                 elif 1 < gacha <= 6 :
                     get = random.choice(legend)
                     kirim_pesan(f':sparkles: Legendary! :sparkles: You got a {get}')
                     time.sleep(1)
                     kirim_pesan(f'Rarity : :star: :star: :star: :star:  (:sparkles: Legendary :sparkles:)')
+                    add_catch(username, 2)
                 elif 6 < gacha <= 20 :
                     get = random.choice(uncommon)
                     kirim_pesan(f'Excellent! You got a {get}')
                     time.sleep(1)
                     kirim_pesan(f'Rarity : :star: :star: :star: (:dolphin: Uncommon :dolphin:)')
+                    add_catch(username, 3)
                 elif 20 < gacha <= 70 :
                     get = random.choice(common)
                     kirim_pesan(f'Nice! You got a {get}')
                     time.sleep(1)
                     kirim_pesan(f'Rarity : :star: :star: (:fish: Common :fish:)')
+                    add_catch(username, 4)
                 else :
                     get = random.choice(trash)
                     kirim_pesan(f'whoops! You got a {get}')
                     time.sleep(1)
                     kirim_pesan(f'Rarity : :star: (:sob: Trash :sob:)')
+                    add_catch(username, 5)
             wait += 1
             if wait == 10 :
                 kirim_pesan("Nothing caught the bait! try again!")
@@ -619,7 +874,15 @@ class Cmd:
             username = match.group(1)
             calculate_form_percentage(username)
 
-
+    def gay(self, match):
+            match = re.search(r'>gay \[([^\]]+)\]', text_cmd)
+            if match:
+                username = match.group(1)
+                percentage = calculate_furry_percentage(username)
+                if percentage < 20:
+                    kirim_pesan(f"{username} is GAY")
+                else :
+                    kirim_pesan(f"{username} is NOT GAY")
 
 
     def day(self, match):
@@ -704,17 +967,6 @@ class Cmd:
     def fakenews(self, match):
 
         ceks = gemini("tell me a made up news")
-
-        def send_ceks_in_parts(ceks):
-            max_length = 60
-            if len(ceks) <= max_length:
-                kirim_pesan(ceks)
-            else:
-                parts = [ceks[i:i+max_length] for i in range(0, len(ceks), max_length)]
-                for part in parts:
-                    kirim_pesan(part) 
-                    time.sleep(2)
-
         send_ceks_in_parts(ceks)
     # def quotes(self, match):
     #     quotes = [
@@ -790,6 +1042,19 @@ class Cmd:
                     kirim_pesan("Error executing Python code:", e)
                 finally:
                     os.remove("temp.py")
+
+    def check(self, match):
+        if match.group(3) is None:
+            kirim_pesan("Use : >check fish/bits/top")
+        else:
+            username = match.group(1)
+            tipe = match.group(3)
+            if tipe == "fish":
+                checkfish(username)
+            elif tipe == "bits":
+                checkduit(username)
+            elif tipe == 'top':
+                checkOrkay()
                     
     def ai(self, match):
         if match.group(3) is None:
@@ -798,16 +1063,6 @@ class Cmd:
             username = match.group(1)
             question = match.group(3)
             ceks = gemini(question)
-
-            def send_ceks_in_parts(ceks):
-                max_length = 60
-                if len(ceks) <= max_length:
-                    kirim_pesan(ceks)
-                else:
-                    parts = [ceks[i:i+max_length] for i in range(0, len(ceks), max_length)]
-                    for part in parts:
-                        kirim_pesan(part) 
-                        time.sleep(2)
             
             send_ceks_in_parts(ceks)
 
@@ -955,6 +1210,9 @@ if  __name__ == '__main__':
         command('news', run.fakenews)
         command('fish', run.fish)
         command('form', run.form)
+        command('gay', run.gay)
+        command('check', run.check)
+        command('hello', run.talkai)
         # command('sit', run.sit)
         # command('stand', run.stand)
         # command('sleep', run.sleep)
